@@ -1,11 +1,599 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WattUI • Librería CSS inspirada en Wattpad — Documentación de Componentes</title>
+  <meta name="description" content="WattUI: micro‑framework CSS cálido, moderno y responsive inspirado en Wattpad para el proyecto AO3 de Alondra." />
+
+  <!-- Fuente: Inter (puedes cambiarla por Nunito/Outfit si prefieres) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       WattUI — Librería CSS inspirada en Wattpad (by Misael & Alondra)
+       ----------------------------------------------------------
+       ► Copia el bloque desde :root hasta el final a wattui.css si deseas separarlo.
+       ► Diseño cálido, legible y mobile‑first.
+       ► Prefijo de clases: .watt-
+       ========================================================== */
+
+    /* 1) Reset & Base -------------------------------------------------- */
+    *,*::before,*::after{box-sizing:border-box}
+    html{font-size:16px}
+    body{margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";color:#1e1e1e;background:#fffaf7;line-height:1.6}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+    :focus-visible{outline:2px solid #ff6a2a;outline-offset:2px}
+
+    /* 2) Design Tokens ------------------------------------------------- */
+    :root{
+      /* Colores principales (Wattpad‑like) */
+      --watt-orange:#ff6a2a;       /* principal */
+      --watt-orange-600:#ff500a;   /* acento */
+      --watt-orange-700:#e44a09;   /* hover */
+      --watt-sand:#fff3ec;         /* surface suave */
+      --watt-cream:#fffaf7;        /* bg base */
+      --watt-ink:#1e1e1e;          /* texto */
+      --watt-ink-600:#3b3b3b;      /* texto secundario */
+      --watt-muted:#a7a7a7;        /* bordes suaves */
+      --watt-line:#e8e1dc;         /* líneas */
+      --watt-success:#16a34a;
+      --watt-warning:#d97706;
+      --watt-danger:#e11d48;
+      --watt-info:#2563eb;
+
+      /* Radios & Shadows */
+      --watt-radius-xs:.375rem;
+      --watt-radius-sm:.5rem;
+      --watt-radius-md:.75rem;
+      --watt-radius-lg:1rem;
+      --watt-shadow-sm:0 1px 2px rgba(0,0,0,.05);
+      --watt-shadow-md:0 6px 16px rgba(0,0,0,.08);
+      --watt-shadow-lg:0 12px 30px rgba(0,0,0,.12);
+
+      /* Tipografía */
+      --watt-h1: clamp(1.8rem, 1.2rem + 2.4vw, 3rem);
+      --watt-h2: clamp(1.4rem, 1.05rem + 1.2vw, 2rem);
+      --watt-h3: 1.25rem;
+      --watt-text: 1rem;
+      --watt-small: .875rem;
+
+      /* Espaciado */
+      --watt-space-1:.25rem;  /* 4px */
+      --watt-space-2:.5rem;   /* 8px */
+      --watt-space-3:.75rem;  /* 12px */
+      --watt-space-4:1rem;    /* 16px */
+      --watt-space-5:1.25rem; /* 20px */
+      --watt-space-6:1.5rem;  /* 24px */
+      --watt-space-8:2rem;    /* 32px */
+      --watt-space-10:2.5rem; /* 40px */
+      --watt-space-12:3rem;   /* 48px */
+
+      /* Contenedores */
+      --watt-max-w:1200px;
+      --watt-nav-h:64px;
+
+      /* Breakpoints */
+      --watt-sm:480px;
+      --watt-md:768px;
+      --watt-lg:1024px;
+    }
+
+    /* 3) Helpers & Layout ---------------------------------------------- */
+    .watt-container{width:min(100%,var(--watt-max-w));margin-inline:auto;padding-inline:var(--watt-space-4)}
+    .watt-section{padding-block:var(--watt-space-8)}
+    .watt-grid{display:grid;gap:var(--watt-space-4)}
+    .watt-grid-2{grid-template-columns:repeat(2,1fr)}
+    .watt-grid-3{grid-template-columns:repeat(3,1fr)}
+    .watt-grid-4{grid-template-columns:repeat(4,1fr)}
+    .watt-flex{display:flex;gap:var(--watt-space-3);align-items:center}
+    .watt-justify-between{justify-content:space-between}
+    .watt-wrap{flex-wrap:wrap}
+    .watt-hide{display:none}
+    .watt-muted{color:var(--watt-muted)}
+    .watt-pill{border-radius:999px}
+    .watt-shadow{box-shadow:var(--watt-shadow-md)}
+    .watt-surface{background:var(--watt-sand);border:1px solid var(--watt-line)}
+
+    @media (max-width: 1024px){
+      .watt-grid-4{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (max-width: 768px){
+      .watt-grid-3,.watt-grid-4{grid-template-columns:repeat(2,1fr)}
+      .watt-hide-md{display:none}
+    }
+    @media (max-width: 480px){
+      .watt-grid-2,.watt-grid-3,.watt-grid-4{grid-template-columns:1fr}
+      .watt-hide-sm{display:none}
+    }
+
+    /* 4) Topbar / Navbar ----------------------------------------------- */
+    .watt-navbar{position:sticky;top:0;z-index:50;height:var(--watt-nav-h);background:#fff;border-bottom:1px solid var(--watt-line);backdrop-filter:saturate(180%) blur(6px)}
+    .watt-navbar .watt-container{height:100%;display:flex;align-items:center;justify-content:space-between}
+    .watt-brand{font-weight:800;letter-spacing:.2px;color:var(--watt-orange-600)}
+    .watt-nav{display:flex;gap:var(--watt-space-4);align-items:center}
+    .watt-nav a{padding:.5rem .75rem;border-radius:var(--watt-radius-sm)}
+    .watt-nav a:hover{background:var(--watt-sand)}
+    .watt-nav .watt-cta{background:var(--watt-orange);color:#fff}
+    .watt-nav .watt-cta:hover{background:var(--watt-orange-700)}
+    .watt-burger{display:none}
+    @media (max-width: 768px){
+      .watt-nav{display:none}
+      .watt-burger{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--watt-line);border-radius:var(--watt-radius-sm)}
+      .watt-burger span{width:18px;height:2px;background:var(--watt-ink);position:relative}
+      .watt-burger span::before,.watt-burger span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--watt-ink)}
+      .watt-burger span::before{top:-6px}
+      .watt-burger span::after{top:6px}
+    }
+
+    /* 5) Hero ------------------------------------------------------------ */
+    .watt-hero{padding-block:clamp(2rem,4vw,5rem);background:linear-gradient(180deg,#fff,#fff7f1 60%,#fff3ec);border-bottom:1px solid var(--watt-line)}
+    .watt-hero h1{font-size:var(--watt-h1);margin:.25rem 0}
+    .watt-hero p{color:var(--watt-ink-600);max-width:60ch}
+    .watt-hero .watt-actions{margin-top:var(--watt-space-5)}
+
+    /* 6) Botones --------------------------------------------------------- */
+    .watt-btn{--bg:#fff;--fg:var(--watt-ink);--bd:var(--watt-line);display:inline-flex;gap:.5rem;align-items:center;justify-content:center;padding:.625rem .95rem;border-radius:var(--watt-radius-sm);border:1px solid var(--bd);background:var(--bg);color:var(--fg);font-weight:600;cursor:pointer;box-shadow:var(--watt-shadow-sm);transition:transform .05s ease, background .2s ease}
+    .watt-btn:hover{transform:translateY(-1px)}
+    .watt-btn:active{transform:translateY(0)}
+    .watt-btn.watt-primary{--bg:var(--watt-orange);--fg:#fff;--bd:transparent}
+    .watt-btn.watt-primary:hover{background:var(--watt-orange-700)}
+    .watt-btn.watt-ghost{background:transparent}
+    .watt-btn.watt-outline{--bg:#fff;--fg:var(--watt-orange-600);--bd:var(--watt-orange-600)}
+    .watt-btn.watt-success{--bg:var(--watt-success);--fg:#fff;--bd:transparent}
+    .watt-btn.watt-danger{--bg:var(--watt-danger);--fg:#fff;--bd:transparent}
+    .watt-btn.watt-warning{--bg:var(--watt-warning);--fg:#fff;--bd:transparent}
+    .watt-btn.watt-icon{padding:.6rem}
+    .watt-btn.watt-pill{padding:.625rem 1rem}
+    .watt-btn.watt-sm{padding:.4rem .7rem;font-size:.9rem}
+    .watt-btn.watt-lg{padding:.85rem 1.1rem;font-size:1.05rem}
+
+    /* 7) Etiquetas / Badges / Chips ------------------------------------ */
+    .watt-badge{display:inline-flex;align-items:center;padding:.25rem .5rem;border-radius:999px;font-size:.75rem;font-weight:700;background:#fff;border:1px solid var(--watt-line);gap:.375rem}
+    .watt-badge.watt-filled{background:var(--watt-orange);border-color:var(--watt-orange);color:#fff}
+    .watt-chip{display:inline-flex;align-items:center;padding:.35rem .6rem;border-radius:999px;background:#fff;border:1px solid var(--watt-line);gap:.35rem}
+    .watt-chip .watt-x{font-weight:800;opacity:.5;cursor:pointer}
+
+    /* 8) Avatares -------------------------------------------------------- */
+    .watt-avatar{--size:40px;width:var(--size);height:var(--size);border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:var(--watt-shadow-sm);background:#ffe5d8;display:grid;place-items:center;font-weight:800;color:var(--watt-orange-600)}
+    .watt-avatar.watt-sm{--size:28px}
+    .watt-avatar.watt-lg{--size:64px}
+
+    /* 9) Tarjetas -------------------------------------------------------- */
+    .watt-card{background:#fff;border:1px solid var(--watt-line);border-radius:var(--watt-radius-md);box-shadow:var(--watt-shadow-sm);overflow:hidden}
+    .watt-card .watt-card-head{padding:var(--watt-space-4);border-bottom:1px solid var(--watt-line);display:flex;gap:var(--watt-space-3);align-items:center}
+    .watt-card .watt-card-body{padding:var(--watt-space-4)}
+    .watt-card .watt-card-foot{padding:var(--watt-space-4);border-top:1px solid var(--watt-line);display:flex;gap:var(--watt-space-3);justify-content:flex-end}
+
+    /* 10) Story Card (Wattpad style) ----------------------------------- */
+    .watt-story{display:grid;grid-template-columns:96px 1fr;gap:var(--watt-space-4);padding:var(--watt-space-4);border:1px solid var(--watt-line);border-radius:var(--watt-radius-md);background:#fff;box-shadow:var(--watt-shadow-sm)}
+    .watt-story .watt-cover{width:96px;height:128px;border-radius:var(--watt-radius-sm);background:#ffe5d8;box-shadow:var(--watt-shadow-sm)}
+    .watt-story h3{margin:.25rem 0;font-size:1.05rem}
+    .watt-story .watt-meta{color:var(--watt-ink-600);font-size:.92rem}
+    .watt-story .watt-tags{margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap}
+    @media (max-width:480px){.watt-story{grid-template-columns:64px 1fr}.watt-story .watt-cover{width:64px;height:88px}}
+
+    /* 11) Tipografía y bloques ----------------------------------------- */
+    h1{font-size:var(--watt-h1);line-height:1.1;margin:0 0 .25rem}
+    h2{font-size:var(--watt-h2);line-height:1.2;margin:0 0 .25rem}
+    h3{font-size:var(--watt-h3);margin:0 0 .25rem}
+    p{margin:.5rem 0}
+    .watt-lead{font-size:1.125rem;color:var(--watt-ink-600)}
+    .watt-code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;background:#222;color:#eee;padding:.5rem .75rem;border-radius:var(--watt-radius-sm);overflow:auto}
+    .watt-quote{border-left:4px solid var(--watt-orange-600);padding:.25rem 0 .25rem .75rem;background:linear-gradient(90deg,#fff3ec,transparent);border-radius:.25rem}
+
+    /* 12) Formularios ---------------------------------------------------- */
+    .watt-field{display:grid;gap:.35rem}
+    .watt-label{font-weight:700;font-size:.95rem}
+    .watt-input,.watt-textarea,.watt-select{padding:.65rem .75rem;border:1px solid var(--watt-line);border-radius:var(--watt-radius-sm);background:#fff;transition:border .2s}
+    .watt-textarea{min-height:120px;resize:vertical}
+    .watt-input:focus,.watt-textarea:focus,.watt-select:focus{border-color:var(--watt-orange)}
+    .watt-help{font-size:.85rem;color:var(--watt-ink-600)}
+
+    /* 13) Switch, Checkbox, Radio -------------------------------------- */
+    .watt-switch{position:relative;width:44px;height:24px;background:#e6e6e6;border-radius:999px;cursor:pointer;transition:background .2s}
+    .watt-switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;box-shadow:var(--watt-shadow-sm);transition:transform .2s}
+    .watt-switch[data-on="true"]{background:var(--watt-orange)}
+    .watt-switch[data-on="true"]::after{transform:translateX(20px)}
+    .watt-check{display:flex;align-items:center;gap:.5rem}
+
+    /* 14) Tabs ----------------------------------------------------------- */
+    .watt-tabs{display:flex;border-bottom:1px solid var(--watt-line);gap:.25rem;flex-wrap:wrap}
+    .watt-tab{padding:.6rem .9rem;border-radius:var(--watt-radius-sm) var(--watt-radius-sm) 0 0;font-weight:700;color:var(--watt-ink-600)}
+    .watt-tab.watt-active{background:#fff;border:1px solid var(--watt-line);border-bottom-color:#fff;color:var(--watt-ink)}
+
+    /* 15) Alertas -------------------------------------------------------- */
+    .watt-alert{padding:.75rem 1rem;border-radius:var(--watt-radius-sm);border:1px solid var(--watt-line);display:flex;gap:.75rem;align-items:flex-start}
+    .watt-alert.watt-success{background:#ecfdf5;border-color:#d1fae5;color:#065f46}
+    .watt-alert.watt-info{background:#eff6ff;border-color:#dbeafe;color:#1e40af}
+    .watt-alert.watt-warning{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .watt-alert.watt-danger{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+
+    /* 16) Breadcrumbs & Paginación ------------------------------------- */
+    .watt-breadcrumbs{display:flex;align-items:center;gap:.35rem;color:var(--watt-ink-600);font-size:.95rem}
+    .watt-breadcrumbs a{color:var(--watt-orange-600)}
+    .watt-pagination{display:flex;gap:.25rem;align-items:center}
+    .watt-page{padding:.5rem .75rem;border:1px solid var(--watt-line);background:#fff;border-radius:var(--watt-radius-sm);min-width:36px;display:grid;place-items:center}
+    .watt-page.watt-current{background:var(--watt-orange);border-color:var(--watt-orange);color:#fff}
+
+    /* 17) Accordion (CSS only) ----------------------------------------- */
+    details.watt-accordion{border:1px solid var(--watt-line);border-radius:var(--watt-radius-sm);background:#fff}
+    details.watt-accordion>summary{list-style:none;padding:.75rem 1rem;cursor:pointer;font-weight:700}
+    details.watt-accordion[open]{box-shadow:var(--watt-shadow-sm)}
+    details.watt-accordion>div{padding:0 1rem 1rem}
+    details.watt-accordion>summary::-webkit-details-marker{display:none}
+
+    /* 18) Tooltip (CSS only) ------------------------------------------- */
+    .watt-tooltip{position:relative;display:inline-block}
+    .watt-tooltip[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:.35rem .5rem;border-radius:var(--watt-radius-xs);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+    .watt-tooltip:hover::after{opacity:1}
+
+    /* 19) Modal (CSS helper + target) ---------------------------------- */
+    .watt-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);padding:var(--watt-space-4)}
+    .watt-modal .watt-dialog{background:#fff;border-radius:var(--watt-radius-md);max-width:560px;width:100%;border:1px solid var(--watt-line);box-shadow:var(--watt-shadow-lg);overflow:hidden}
+    .watt-modal .watt-dialog header, .watt-modal .watt-dialog footer{padding:var(--watt-space-4);border-bottom:1px solid var(--watt-line)}
+    .watt-modal .watt-dialog footer{border-bottom:none;border-top:1px solid var(--watt-line);display:flex;gap:.5rem;justify-content:flex-end}
+    .watt-modal .watt-dialog .watt-content{padding:var(--watt-space-4)}
+    /* Activación por hash */
+    :target.watt-modal{display:flex}
+
+    /* 20) Tabla responsive --------------------------------------------- */
+    .watt-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--watt-line);border-radius:var(--watt-radius-sm);overflow:hidden}
+    .watt-table th,.watt-table td{padding:.75rem .9rem;border-bottom:1px solid var(--watt-line);text-align:left}
+    .watt-table thead th{background:#fff7f1;font-weight:800}
+    @media (max-width:768px){
+      .watt-table thead{display:none}
+      .watt-table tr{display:grid;border-bottom:1px solid var(--watt-line);padding:.5rem}
+      .watt-table td{border:none;padding:.35rem 0}
+      .watt-table td[data-label]::before{content:attr(data-label)"\00a0\00a0";font-weight:700;color:var(--watt-ink-600)}
+    }
+
+    /* 21) Progress, Steps, Skeleton ------------------------------------ */
+    .watt-progress{height:10px;background:#f1f1f1;border-radius:999px;overflow:hidden}
+    .watt-progress>span{display:block;height:100%;background:var(--watt-orange);width:40%}
+    .watt-steps{display:flex;gap:var(--watt-space-4);flex-wrap:wrap}
+    .watt-step{display:flex;align-items:center;gap:.5rem}
+    .watt-step .watt-dot{width:22px;height:22px;border-radius:50%;background:#ffe1d2;border:2px solid var(--watt-orange-600);display:grid;place-items:center;font-size:.75rem;font-weight:800}
+    .watt-skeleton{display:block;background:linear-gradient(90deg,#eee,#f7f7f7,#eee);background-size:200% 100%;animation:watt-shimmer 1.2s infinite;min-height:1rem;border-radius:.4rem}
+    @keyframes watt-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* 22) Toast (CSS only) --------------------------------------------- */
+    .watt-toast{position:fixed;right:1rem;bottom:1rem;display:grid;gap:.5rem;z-index:60}
+    .watt-toast .watt-item{background:#222;color:#fff;border-radius:var(--watt-radius-sm);padding:.6rem .8rem;box-shadow:var(--watt-shadow-md)}
+
+    /* 23) Footer -------------------------------------------------------- */
+    .watt-footer{padding:var(--watt-space-8) 0;border-top:1px solid var(--watt-line);background:#fff}
+
+    /* 24) Docs: bloques de demo ---------------------------------------- */
+    .docs-hgroup{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+    .docs-card{padding:var(--watt-space-4);border:1px dashed var(--watt-line);border-radius:var(--watt-radius-sm);background:#fff}
+    .docs-grid{display:grid;gap:var(--watt-space-4)}
+    .docs-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    .docs-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    @media (max-width:768px){.docs-grid.cols-2,.docs-grid.cols-3{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-    <h1>Prueba</h1>
+  <!-- Navbar -->
+  <header class="watt-navbar">
+    <div class="watt-container">
+      <div class="watt-flex">
+        <div class="watt-avatar watt-sm">W</div>
+        <a class="watt-brand" href="#top">WattUI</a>
+      </div>
+      <nav class="watt-nav">
+        <a href="#instalacion">Instalación</a>
+        <a href="#tipografia">Tipografía</a>
+        <a href="#botones">Botones</a>
+        <a href="#tarjetas">Tarjetas</a>
+        <a href="#story">Story</a>
+        <a href="#formularios">Formularios</a>
+        <a class="watt-cta" href="#componentes">Componentes</a>
+      </nav>
+      <button class="watt-burger" aria-label="Abrir menú"><span></span></button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="watt-hero" id="top">
+    <div class="watt-container">
+      <span class="watt-badge watt-filled">Nuevo</span>
+      <h1>WattUI <span class="watt-muted">— CSS inspirado en Wattpad</span></h1>
+      <p class="watt-lead">Micro‑framework cálido, minimal y responsive para el proyecto AO3 de Alondra. Incluye tipografías, grid, botones, tarjetas, historias, formularios, tabs, modales, tablas responsive, pasos, toasts y más.</p>
+      <div class="watt-actions">
+        <a class="watt-btn watt-primary watt-pill" href="#instalacion">Empezar</a>
+        <a class="watt-btn watt-outline watt-pill" href="#componentes">Ver componentes</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="watt-container">
+    <!-- Instalación -->
+    <section class="watt-section" id="instalacion">
+      <div class="docs-hgroup">
+        <h2>Instalación</h2>
+        <span class="watt-badge">Mobile‑first</span>
+      </div>
+      <p>Copia el CSS embebido de este archivo a <strong>./css/wattui.css</strong> y enlázalo en tus vistas:</p>
+      <pre class="watt-code">&lt;link rel="stylesheet" href="/css/wattui.css" /&gt;</pre>
+      <p>Recomendación de colores: <code>--watt-orange</code> y superficies crema para emular la vibra Wattpad.</p>
+    </section>
+
+    <!-- Tipografía / Bloques -->
+    <section class="watt-section" id="tipografia">
+      <h2>Tipografía &amp; Bloques</h2>
+      <div class="docs-grid cols-2">
+        <div class="docs-card">
+          <h1>Título H1</h1>
+          <h2>Subtítulo H2</h2>
+          <h3>Encabezado H3</h3>
+          <p>Texto base con un <a href="#">enlace de ejemplo</a>. Agrega <span class="watt-badge">badges</span> o <span class="watt-chip"><span>#</span>tag<span class="watt-x">×</span></span>.</p>
+          <blockquote class="watt-quote">“La lectura nos abre mundos; la escritura los crea.”</blockquote>
+          <pre class="watt-code">.watt-lead { font-size: 1.125rem; color: var(--watt-ink-600); }</pre>
+        </div>
+        <div class="docs-card">
+          <h3>Grid</h3>
+          <div class="watt-grid watt-grid-3">
+            <div class="watt-surface watt-card-body">Columna</div>
+            <div class="watt-surface watt-card-body">Columna</div>
+            <div class="watt-surface watt-card-body">Columna</div>
+          </div>
+          <p class="watt-help">El grid colapsa a 2 y 1 columnas en MD/SM.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Botones -->
+    <section class="watt-section" id="botones">
+      <h2>Botones</h2>
+      <div class="watt-flex watt-wrap">
+        <button class="watt-btn watt-primary">Primario</button>
+        <button class="watt-btn watt-outline">Outline</button>
+        <button class="watt-btn watt-ghost">Ghost</button>
+        <button class="watt-btn watt-success">Éxito</button>
+        <button class="watt-btn watt-warning">Aviso</button>
+        <button class="watt-btn watt-danger">Peligro</button>
+        <button class="watt-btn watt-icon" aria-label="Favorito">❤</button>
+        <button class="watt-btn watt-primary watt-sm">Pequeño</button>
+        <button class="watt-btn watt-primary watt-lg">Grande</button>
+        <button class="watt-btn watt-primary watt-pill">Pill</button>
+      </div>
+    </section>
+
+    <!-- Tarjetas -->
+    <section class="watt-section" id="tarjetas">
+      <h2>Tarjetas</h2>
+      <div class="watt-grid watt-grid-3">
+        <article class="watt-card">
+          <header class="watt-card-head">
+            <div class="watt-avatar">A</div>
+            <div>
+              <div><strong>Actualizaciones</strong></div>
+              <div class="watt-muted">hace 2 horas</div>
+            </div>
+          </header>
+          <div class="watt-card-body">
+            <p>Nuevos estilos para historias y lectura confortable.</p>
+          </div>
+          <footer class="watt-card-foot">
+            <button class="watt-btn watt-ghost">Omitir</button>
+            <button class="watt-btn watt-primary">Leer más</button>
+          </footer>
+        </article>
+        <article class="watt-card">
+          <div class="watt-card-body">
+            <h3>Tarjeta simple</h3>
+            <p>Bloque con borde suave y sombra ligera.</p>
+          </div>
+        </article>
+        <article class="watt-card">
+          <div class="watt-card-body">
+            <h3>Tarjeta con acciones</h3>
+            <div class="watt-flex"><span class="watt-badge watt-filled">Hot</span><span class="watt-badge">Nuevo</span></div>
+          </div>
+          <footer class="watt-card-foot">
+            <button class="watt-btn watt-outline">Compartir</button>
+            <button class="watt-btn watt-primary">Guardar</button>
+          </footer>
+        </article>
+      </div>
+    </section>
+
+    <!-- Story Card (estilo Wattpad) -->
+    <section class="watt-section" id="story">
+      <h2>Story Card</h2>
+      <article class="watt-story">
+        <div class="watt-cover" aria-hidden="true"></div>
+        <div>
+          <h3>El susurro de las luciérnagas</h3>
+          <div class="watt-meta">por <strong>Alondra</strong> · 24 capítulos · Romance</div>
+          <div class="watt-tags">
+            <span class="watt-chip"><span>#</span>romance</span>
+            <span class="watt-chip"><span>#</span>sliceoflife</span>
+            <span class="watt-chip"><span>#</span>mx</span>
+          </div>
+          <div class="watt-actions" style="margin-top:.5rem">
+            <button class="watt-btn watt-primary">Leer</button>
+            <button class="watt-btn watt-ghost">Añadir a biblioteca</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Formularios -->
+    <section class="watt-section" id="formularios">
+      <h2>Formularios</h2>
+      <div class="watt-grid watt-grid-2">
+        <form class="watt-card">
+          <div class="watt-card-body">
+            <div class="watt-field">
+              <label class="watt-label">Título</label>
+              <input class="watt-input" placeholder="Ingresa el título" />
+              <span class="watt-help">Hasta 120 caracteres.</span>
+            </div>
+            <div class="watt-field">
+              <label class="watt-label">Categoría</label>
+              <select class="watt-select">
+                <option>Romance</option>
+                <option>Fantasía</option>
+                <option>Ciencia Ficción</option>
+              </select>
+            </div>
+            <div class="watt-field">
+              <label class="watt-label">Sinopsis</label>
+              <textarea class="watt-textarea" placeholder="Cuéntanos sobre tu historia..."></textarea>
+            </div>
+            <div class="watt-flex watt-wrap" style="margin:.75rem 0">
+              <label class="watt-check"><input type="checkbox" /> Público</label>
+              <label class="watt-check"><input type="radio" name="estado" checked /> Borrador</label>
+              <label class="watt-check"><input type="radio" name="estado" /> Publicado</label>
+              <div class="watt-switch" role="switch" aria-checked="true" data-on="true" title="Comentarios habilitados"></div>
+            </div>
+          </div>
+          <footer class="watt-card-foot">
+            <button class="watt-btn watt-ghost" type="reset">Cancelar</button>
+            <button class="watt-btn watt-primary" type="submit">Guardar</button>
+          </footer>
+        </form>
+        <div class="watt-card">
+          <div class="watt-card-body">
+            <h3>Inputs</h3>
+            <div class="watt-grid">
+              <input class="watt-input" placeholder="Texto" />
+              <input class="watt-input" type="email" placeholder="Email" />
+              <input class="watt-input" type="password" placeholder="Password" />
+              <input class="watt-input" type="search" placeholder="Buscar..." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs, Breadcrumbs, Alerts, Pagination -->
+    <section class="watt-section" id="componentes">
+      <h2>Componentes UI</h2>
+
+      <div class="docs-card">
+        <div class="watt-tabs" style="margin-bottom: .75rem">
+          <a class="watt-tab watt-active" href="#">General</a>
+          <a class="watt-tab" href="#">Comentarios</a>
+          <a class="watt-tab" href="#">Capítulos</a>
+        </div>
+        <div class="watt-breadcrumbs" style="margin-bottom: .75rem">
+          <a href="#">Inicio</a> › <a href="#">Historias</a> › <span>El susurro...</span>
+        </div>
+        <div class="watt-grid">
+          <div class="watt-alert watt-success">Guardado correctamente.</div>
+          <div class="watt-alert watt-info">Tienes 2 notificaciones nuevas.</div>
+          <div class="watt-alert watt-warning">Revisa los campos obligatorios.</div>
+          <div class="watt-alert watt-danger">No fue posible publicar la historia.</div>
+        </div>
+        <div class="watt-flex watt-justify-between" style="margin-top:1rem">
+          <div class="watt-pagination">
+            <a class="watt-page" href="#">«</a>
+            <a class="watt-page" href="#">1</a>
+            <a class="watt-page watt-current" href="#">2</a>
+            <a class="watt-page" href="#">3</a>
+            <a class="watt-page" href="#">»</a>
+          </div>
+          <div class="watt-tooltip" data-tip="Acción rápida">
+            <button class="watt-btn watt-primary">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion / Details -->
+      <div class="docs-card" style="margin-top:1rem">
+        <details class="watt-accordion">
+          <summary>¿Cómo funciona la publicación escalonada?</summary>
+          <div>
+            <p>Puedes programar capítulos con fechas futuras. La portada y la sinopsis quedan visibles.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- Modal (con :target) -->
+      <div class="docs-card" style="margin-top:1rem">
+        <a class="watt-btn watt-outline" href="#demo-modal">Abrir modal</a>
+        <div class="watt-modal" id="demo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="watt-dialog">
+            <header><strong id="modal-title">Confirmar publicación</strong></header>
+            <div class="watt-content">
+              <p>¿Deseas publicar esta historia ahora? Podrás editarla después.</p>
+            </div>
+            <footer>
+              <a class="watt-btn watt-ghost" href="#componentes">Cancelar</a>
+              <a class="watt-btn watt-primary" href="#componentes">Publicar</a>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla Responsive -->
+      <div class="docs-card" style="margin-top:1rem">
+        <h3>Tabla de capítulos</h3>
+        <table class="watt-table">
+          <thead>
+            <tr><th>#</th><th>Título</th><th>Estado</th><th>Fecha</th></tr>
+          </thead>
+          <tbody>
+            <tr><td data-label="#">1</td><td data-label="Título">Prólogo</td><td data-label="Estado"><span class="watt-badge watt-filled">Publicado</span></td><td data-label="Fecha">2025‑03‑02</td></tr>
+            <tr><td data-label="#">2</td><td data-label="Título">Luciérnagas</td><td data-label="Estado"><span class="watt-badge">Borrador</span></td><td data-label="Fecha">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Progress / Steps / Skeleton -->
+      <div class="docs-grid cols-3" style="margin-top:1rem">
+        <div class="docs-card">
+          <h3>Progreso</h3>
+          <div class="watt-progress"><span style="width:66%"></span></div>
+        </div>
+        <div class="docs-card">
+          <h3>Pasos</h3>
+          <div class="watt-steps">
+            <div class="watt-step"><div class="watt-dot">1</div> Portada</div>
+            <div class="watt-step"><div class="watt-dot">2</div> Sinopsis</div>
+            <div class="watt-step"><div class="watt-dot">3</div> Publicar</div>
+          </div>
+        </div>
+        <div class="docs-card">
+          <h3>Skeleton</h3>
+          <span class="watt-skeleton" style="height:20px"></span>
+          <span class="watt-skeleton" style="height:12px;margin-top:.35rem"></span>
+          <span class="watt-skeleton" style="height:12px;margin-top:.35rem;width:80%"></span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="watt-footer">
+    <div class="watt-container watt-flex watt-justify-between watt-wrap">
+      <p class="watt-muted">WattUI © 2025 — Diseño inspirado en Wattpad para el proyecto de Alondra.</p>
+      <div class="watt-flex watt-wrap">
+        <a class="watt-badge" href="#top">Volver arriba</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast de demo -->
+  <div class="watt-toast">
+    <div class="watt-item">Bienvenida, Alondra ✨</div>
+  </div>
+
+  <!-- Script mínimo para toggles de demo (opcional, sin dependencias) -->
+  <script>
+    // Toggle de switch (solo demo visual)
+    document.querySelectorAll('.watt-switch').forEach(sw=>{
+      sw.addEventListener('click',()=>{
+        const on = sw.getAttribute('data-on') === 'true';
+        sw.setAttribute('data-on', String(!on));
+        sw.setAttribute('aria-checked', String(!on));
+      });
+    });
+  </script>
 </body>
 </html>
