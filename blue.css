@@ -1,0 +1,92 @@
+/* ==========================================================
+   WattUI — Tema Azul (overrides no intrusivos)
+   Uso A: <html data-watt-theme="blue"> ... </html>
+   Uso B: <div class="watt-theme-blue"> ... </div>
+   ========================================================== */
+
+/* ---- Scope por atributo (A) ---- */
+:root[data-watt-theme="blue"]{
+  /* Primarios (azules) */
+  --watt-orange:       #2563eb; /* azul 600 */
+  --watt-orange-600:   #1d4ed8; /* azul 700 */
+  --watt-orange-700:   #1e40af; /* azul 800 */
+
+  /* Superficies y líneas con tinte azul suave */
+  --watt-sand:         #f2f6ff; /* surface suave */
+  --watt-cream:        #f7faff; /* bg base */
+  --watt-line:         #e3eaf6; /* líneas */
+  --watt-muted:        #8aa0b6; /* bordes/texteado suave */
+
+  /* Status (opcional: mantenemos los existentes; info ya es azul) */
+  /* --watt-info queda en #2563eb */
+}
+
+/* ---- Scope por clase (B) ---- */
+.watt-theme-blue{
+  --watt-orange:       #2563eb;
+  --watt-orange-600:   #1d4ed8;
+  --watt-orange-700:   #1e40af;
+
+  --watt-sand:         #f2f6ff;
+  --watt-cream:        #f7faff;
+  --watt-line:         #e3eaf6;
+  --watt-muted:        #8aa0b6;
+}
+
+/* Accesibilidad: color de foco acorde al tema */
+:root[data-watt-theme="blue"] :focus-visible,
+.watt-theme-blue :focus-visible{
+  outline-color: var(--watt-orange);
+}
+
+/* Hero con gradiente azul suave */
+:root[data-watt-theme="blue"] .watt-hero,
+.watt-theme-blue .watt-hero{
+  background: linear-gradient(180deg,#ffffff,#f9fbff 60%,#f2f6ff);
+}
+
+/* Avatar con tinte azul claro */
+:root[data-watt-theme="blue"] .watt-avatar,
+.watt-theme-blue .watt-avatar{
+  background:#dbeafe; /* azul 200 */
+  color: var(--watt-orange-600);
+}
+
+/* Cita con acento azul */
+:root[data-watt-theme="blue"] .watt-quote,
+.watt-theme-blue .watt-quote{
+  border-left:4px solid var(--watt-orange-600);
+  background:linear-gradient(90deg,#eef2ff,transparent); /* indigo/azul muy claro */
+}
+
+/* Tabla: cabecera con wash azul */
+:root[data-watt-theme="blue"] .watt-table thead th,
+.watt-theme-blue .watt-table thead th{
+  background:#f0f5ff;
+}
+
+/* Breadcrumb link color (coherente con primario) */
+:root[data-watt-theme="blue"] .watt-breadcrumbs a,
+.watt-theme-blue .watt-breadcrumbs a{
+  color: var(--watt-orange-600);
+}
+
+/* Tooltip no cambia; si quieres un toque más azul, descomenta: */
+/*
+:root[data-watt-theme="blue"] .watt-tooltip[data-tip]::after,
+.watt-theme-blue .watt-tooltip[data-tip]::after{
+  background:#0f172a;  color:#eaf2ff;
+}
+*/
+
+/* Progress/steps toman el primario automáticamente, 
+   pero afinamos el punto del step para mejor contraste */
+:root[data-watt-theme="blue"] .watt-step .watt-dot,
+.watt-theme-blue .watt-step .watt-dot{
+  background:#e0eaff;
+  border-color:var(--watt-orange-600);
+}
+
+/* Navbar brand (ya usa var --watt-orange-600, se actualiza solo)
+   CTA, botones .watt-primary/.watt-outline, badges filled, 
+   tabs activas, paginación actual, etc. heredan del primario azul. */
